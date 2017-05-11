@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-control" content="No-Cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Twitchy</title>
+    <!-- google pagespeed api key: AIzaSyD0lgmvi0CKw8T-LZbXpC6PLVp77NRohL0 -->
+   
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> <!-- thumbnails -->
+    <link rel="stylesheet" href="vendor/font-awesome-4.6.3/css/font-awesome.min.css"> <!-- icons -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+	<!-- toggles ripple effect -->
+  	<span id='ripple-switch'>toggle ripples</span>
+  	
+  	<!-- stream player modal -->
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close"><i class="fa fa-times" aria-hidden="true"></i></span>
+            <span class="minimize-chat"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+        </div>
+    </div>
+  	
+    <!-- top -->
+    <div class="header">
+        <ul class="items">
+            <li>
+            	<a id="title" href='.'><img src="http://localhost:8080/Twitchy/assets/twitchy_logo.png" alt="logo"/></a>
+            	<span id='tagline'>A lightweight stream-viewing tool powered by the Twitch API.</span>
+            </li>
+            <li id="spacer"></li> <!-- this just pushes both of the other li's to either end  -->
+            <li id='history'><i class="fa fa-history" aria-hidden="true"></i></li>
+            <!-- possibly add more items later -->
+        </ul>
+    </div>
+    
+    <!-- below top -->
+    <div class="flex-wrap">
+        <!-- left side -->
+        <div class="side-nav">
+            <ul class="filters">
+                <li><span>Filters <i class="fa fa-filter" aria-hidden="true"></i></span></li>
+                <li><label for="f_keyword">Keyword </label><input id="f_keyword" name="f_keyword" type="text" placeholder="Browse by keyword ..."></li>
+                <li><label for="f_game">Game </label><input id="f_game" name="f_game" type="text" placeholder="Browse by game title ..."></li>
+                <li><label for="f_channel">Channel </label><input id="f_channel" name="f_channel" type="text" placeholder="Browse by Twitch channel ..."></li>
+            </ul>
+        </div>
+        <!-- middle -->
+        <div class="stream-container">
+        	<!-- will be populated dynamically via Twitch API -->
+        </div>
+        <!-- right side -->
+        <div class='history-tab'><ul></ul></div>
+    </div>
+    
+    <!-- hide immediately with js on page load. thus, works like <noscript> tag -->
+    <div class='noscript'>
+    	<div class='noscript-content'>
+	    	<p>
+	    		Woops! This website requires Javascript to function properly. 
+	    		Please enable this in your browser and <a href='.'>refresh</a> the page.
+	    		<span>Thank you for using Twitchy!</span>
+	    	</p>
+    	</div>
+    </div>
+    
+    <!-- immediately hides the noscript stuff if js is enabled -->
+    <script>
+		document.querySelector(".noscript").style.display = "none";
+	</script>
+    <script src="vendor/jquery.min.js"></script> <!-- jquery -->
+    <script src="vendor/jquery.unveil.js"></script> <!-- lazy-load image js-->
+    <script src="vendor/jquery.ripples-min.js"></script> <!-- jquery ripple background js -->
+    <script src="vendor/js.cookie.js"></script> <!-- cookie-setting js -->
+    <script src="js/main.js"></script> <!-- custom js -->
+</body>
+</html>
