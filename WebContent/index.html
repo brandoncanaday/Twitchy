@@ -13,9 +13,6 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-	<!-- toggles ripple effect -->
-  	<span id='ripple-switch'>toggle ripples</span>
-  	
   	<!-- stream player modal -->
     <div class="modal">
         <div class="modal-content">
@@ -27,11 +24,8 @@
     <!-- top -->
     <div class="header">
         <ul class="items">
-            <li>
-            	<a id="title" href='.'><img src="assets/twitchy_logo.png" alt="logo"/></a>
-            	<span id='tagline'>A lightweight stream-viewing tool powered by the Twitch API.</span>
-            </li>
-            <li id="spacer"></li> <!-- this just pushes both of the other li's to either end  -->
+            <li><a id="title" href='.'><img src="assets/twitchy_logo.png" alt="logo"/></a></li>
+            <li id="search"><input id="f_keyword" name="f_keyword" type="text" placeholder="Search"></li>
             <li id='history'><i class="fa fa-history" aria-hidden="true"></i></li>
             <!-- possibly add more items later -->
         </ul>
@@ -39,20 +33,7 @@
     
     <!-- below top -->
     <div class="flex-wrap">
-        <!-- left side -->
-        <div class="side-nav">
-            <ul class="filters">
-                <li><span>Filters <i class="fa fa-filter" aria-hidden="true"></i></span></li>
-                <li><label for="f_keyword">Keyword </label><input id="f_keyword" name="f_keyword" type="text" placeholder="Browse by keyword ..."></li>
-                <li><label for="f_game">Game </label><input id="f_game" name="f_game" type="text" placeholder="Browse by game title ..."></li>
-                <li><label for="f_channel">Channel </label><input id="f_channel" name="f_channel" type="text" placeholder="Browse by Twitch channel ..."></li>
-            </ul>
-        </div>
-        <!-- middle -->
-        <div class="stream-container">
-        	<!-- will be populated dynamically via Twitch API -->
-        </div>
-        <!-- right side -->
+        <div class="stream-container"></div>
         <div class='history-tab'><ul></ul></div>
     </div>
     

@@ -26,48 +26,45 @@ $(document).ready(function() {
 
 	//GET LIVE STREAMS STUFF
 	//gets streams from Twitch api and displays them
-	var c_row;
 	function getStreams(_keyword, _game, _channel, _page, overwrite) {
 		$.ajax({
 	        type: "POST",
 	        url: "StreamServlet",
 	        data: {f_keyword: _keyword, f_game: _game, f_channel: _channel, page: _page, client_id: "n541yjhwjewnpa7gztgwxqph5fkavr"},
 	        success: function(data) { 
-	            // populate .stream-container with .stream-row's/.stream's
+	            // populate stream container with streams
 	            var sc = $('.stream-container');
-	            if(overwrite) { // overwrites html instead of appending
-	            	sc.empty(); 
-	            	c_row = null; 
-	            } else { // remove stream-spacer if present
-	            	if(c_row != null && c_row.children('.stream-spacer')) { c_row.children('.stream-spacer').remove(); } // if
-	            } // if/else
+	            // overwrites html instead of appending
+	            if(overwrite) sc.empty();
 	            // begin dynamically creating stream html from servlet JSON response
 	            var str, thumb, head, info;
 	            var didFindStreams = false;
-	            var STREAMS_PER_ROW = 3;
 	            $.each(data, function(i, stream) {
 	            	didFindStreams = true;
-	            	// every STREAMS_PER_ROW streams added, make a new stream row
-	            	if(c_row == null || c_row.children().length == STREAMS_PER_ROW) { 
-	            		sc.append("<div class='stream-row'></div>"); 
-	            		c_row = $('.stream-row:last'); 
-	            	} // if
-	            	c_row.append("<div class='stream' "   +
+	            	// appends stream to container
+	            	sc.append("<div class='stream' "   +
 							 		"data-stream-id='"  + stream.stream_id  + "' " +
 							 		"data-viewers='" 	+ stream.viewers 	+ "' " +
 							 		"data-game='" 		+ ((stream.game) ? stream.game : "[no title]") + "' " +
 							 		"data-preview='"	+ stream.preview	+ "' " +
 							 		"data-ch-name='"	+ stream.ch_name	+ "' " +
 							 		"data-ch-url='"		+ stream.ch_url		+ "' " +
-							    "</div>");
-		        	str = c_row.children(':last');
+							  "</div>");
+	            	// grab stream
+		        	str = sc.children(':last');
+		        	// append thumbnail to stream
 		        	str.append("<div class='thumbnail'></div>");
+		        		// grab thumbnail
 		            	thumb = str.children('.thumbnail');
+		            	// append heading and info to thumbnail
 		            	thumb.append("<div class='heading'></div>");
 		            	thumb.append("<div class='info'></div>");
+		            		// grab heading
 			            	head = thumb.children('.heading');
+			            	// change heading background to stream preview img
 			            	head.css('backgroundImage','url("'+stream.preview+'")');
-			            	if(searchPlaylistForStream(playlist,stream.stream_id) >= 0) {
+			            	// if stream is in user's watch later playlist
+			            	if(searchPlaylistForStream(playlist,stream.stream_id) > -1) {
 			            		// append a checkmark icon for watch-later button
 			            		head.append("<span class='watch-later added' data-tooltip='Added'>" +
 		            							"<i class='fa fa-check' aria-hidden='true'></i>" +
@@ -78,7 +75,9 @@ $(document).ready(function() {
 		            							"<i class='fa fa-history' aria-hidden='true'></i>" +
 		            						"</span>");
 			            	} // if
+			            	// grab info
 			            	info = thumb.children('.info');
+			            	// append stream name, channel url, channel name, number of viewers to info
 			            	info.append("<div class='game'><span>"+stream.game+"</span></div>");
 			            	info.append("<div class='ch_name'>"+
 			            					"<a href='"+stream.ch_url+"' " +
@@ -90,12 +89,9 @@ $(document).ready(function() {
 			            					"<span>"+stream.viewers.toLocaleString()+"</span>" +
 			            				"</div>");
 	            }); // end $.each 
+	            // if no streams were found, tell the user
 	            if(!didFindStreams && !sc.html()) { 
 	            	sc.append("<div class='no-results'><span>Woops! No matches were found for your search.</span></div>"); 
-	            } else if(c_row.children().length != STREAMS_PER_ROW) {
-	            	for(var i = c_row.children().length; i < STREAMS_PER_ROW; i++) {
-	            		c_row.append("<div class='stream-spacer'></div>");
-	            	} // for
 	            } // if
 	        },
 	        error: function(xhr, error, msg) { // there was some problem in accessing the StreamServlet
@@ -124,56 +120,21 @@ $(document).ready(function() {
 	    } // if
 	});
 
-	//FILTERS STUFF
-	//disables all other filters when typing. calls getStreams() after done typing. new streams reflect filter text
+	//SEARCH STUFF
+	//calls getStreams() after done typing. new streams reflect search text
 	var typingTimer; // timer identifier
-	$('.filters input').on('input', function() {
-		// disable all other filter inputs if one has text inside it
+	$('#f_keyword').on('input', function() {
 		var $this = $(this);
-		var other_inputs = $this.closest('.filters').find('input').not($this);
-		if($this.val()) {
-			other_inputs.attr('disabled','disabled');
-			other_inputs.css('cursor', 'not-allowed');
-		} else {
-			other_inputs.removeAttr('disabled');
-			other_inputs.css('cursor', 'text');
-		} // if/else
-		
-		// update streams in stream container
-		clearTimeout(typingTimer); // reset the timer
+		clearTimeout(typingTimer);
+		// waits 0.8s after typing is over to update streams
 		typingTimer = setTimeout(function() {
-			var id = $this.attr('id');
-			if(id == "f_keyword") {
-				getStreams($this.val(),"","","0", true)
-			} else if(id == "f_game") {
-				getStreams("",$this.val(),"","0", true)
-			} else {
-				getStreams("","",$this.val(),"0", true)
-			} // if/else
-		}, 800); // waits 0.8s after typing is over to update streams
+			getStreams($this.val(),"","","0", true);
+		}, 800);
 	});
 
 	//RIPPLE EFFECT STUFF
 	//creates js ripples on background image
 	$('body').ripples({ resolution: 512, dropRadius: 20, perturbance: 0.05 });
-	var on = true;
-	$('#ripple-switch').click(function() {
-		if(on) {
-			$('body').ripples('pause');
-			on = false;
-		} else {
-			$('body').ripples('play');
-			on = true;
-		} // if/else
-	});
-
-	//SIDE NAV STUFF
-	//increases width of side nav on hover. enables user to input filter text
-	$('.side-nav li:not(:nth-child(1))').mouseenter(function() {
-		$('.side-nav').css('width', '30rem');
-	}).mouseleave(function() {
-		$('.side-nav').css('width', '9.5rem');
-	});
 
 	//WATCH LATER TAB STUFF
 	//called on page load. initializes watch later tab and playlist[] from cookie('playlist')
@@ -292,16 +253,13 @@ $(document).ready(function() {
 	//pulls out watch later tab
 	var out = false;
 	$('#history').click(function() {
-		var $left = $('.side-nav');
 		var $right = $('.history-tab');
 		if(!out) {
 			$(this).children('i').css('transform', 'rotate(-360deg)');
-			$left.css({ 'width': 0, 'display': 'none' });
 			$right.css({ 'width': '25rem', 'display': 'block' });
 			out = true;
 		} else {
 			$(this).children('i').css('transform', 'rotate(0deg)');
-			$left.css({ 'width': '9.5rem', 'display': 'block' });
 			$right.css({ 'width': 0, 'display': 'none' });
 			out = false;
 		} // if/else

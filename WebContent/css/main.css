@@ -1,7 +1,5 @@
 /* ________________________ DESKTOP-FIRST CSS (not good but oh well) _________________________ */
 
-/* __________ FRAMEWORK __________ */
-
 html, body { 
     position: absolute;
     overflow: hidden;
@@ -14,38 +12,12 @@ html, body {
 }
 
 body {
-    background: #232526; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #232526 , #414345); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right top, #232526 , #414345); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 	background: url("../assets/twitch_bg.jpg");
+	background: #232526; /* fallback for old browsers */
 	background-size: cover;
 	background-position: center center;
 	background-repeat: no-repeat;
 	overflow: hidden;
-}
-
-#ripple-switch {
-	position: fixed;
-	z-index: 99;
-	cursor: pointer;
-	text-align: center;
-	top: 0;
-	right: 0; 
-	left: 0;
-	width: 7rem;
-	margin: 0 auto;
-	color: whitesmoke;
-	font-family: 'Roboto', sans-serif;
-	font-size: .9rem;
-	padding: .4rem .2rem .4rem;
-	border-radius: 0 0 .5rem .5rem;
-	border: 1px solid darkmagenta;
-	border-top: none;
-}
-
-#ripple-switch:hover {
-	cursor: pointer;
-	box-shadow: 0px 1px 5px 1px rgba(105,105,105,.7);
 }
 
 /* __________ HEADER __________ */
@@ -58,7 +30,7 @@ body {
     transition: background .4 ease-out;
 }
 
-.header ul, .side-nav ul { /* both header and side nav */
+.header ul {
     display: flex; 
     flex-direction: row; 
     position: absolute; 
@@ -71,37 +43,19 @@ body {
     margin: 0;
 }
 
-.header ul > li, .side-nav ul > li { /* both header and side nav */
-    display: flex;  
+.header ul > li { 
+    display: flex; 
+    flex-grow: 0; 
     position: relative; 
     align-items: center; 
     list-style: none;  
-    flex-grow: 1; 
-    padding: 0 1rem;
     overflow: hidden;
 }
 
-/* lightens background on every flex node except title in header and 'filter by' in side nav */
-
-.header ul > li:not(:nth-child(1)):hover, .side-nav ul > li:not(:nth-child(1)):hover { /* both header and side nav */
-    background-color: rgba(105,105,105,.3);
-}
-
-/* first and last flex nodes */
-
-.header ul > li:first, .header ul > li:last {
-    flex-grow: 0;
-}
-
-/* title stuff */
+/* title node stuff */
 
 .header ul > li > #title {
-	padding-top: 1.5rem;
-	padding-left: 1rem;
-    font-size: 3.4rem;
-    font-weight: 100;
-    letter-spacing: .9rem;
-    color: white;
+	padding: 1rem 0 1rem 1.5rem;
 }
 
 .header ul > li > #title:hover {
@@ -113,30 +67,42 @@ body {
 	width: auto;
 }
 
-.header ul > li > #tagline {
-	margin: 1.5rem 0 0 .5rem;
-    font-size: 1.2rem;
-    font-weight: 100;
-    color: white;
-    letter-spacing: normal;
-    text-emphasis: italic;
-    opacity: 0;
-    transition: opacity .4s ease-out;
-    pointer-events: none;
-}
+/* search node stuff */
 
-.header ul > li > #title:hover + #tagline { 
-    opacity: 1;
-}
-
-/* middle flex node */
-
-.header ul > #spacer {
-	visibility: hidden;
+.header ul > #search {
 	flex-grow: 1;
+	justify-content: center;
 }
 
-/* last flex node */
+.header ul > #search > input {
+	display: block;
+	width: 80%;
+	border: none;
+	border-radius: .5rem;
+	box-shadow: 0 0 2px magenta;
+    transition: all .3s ease-out;
+    background: transparent;
+    padding: .5rem;
+    font-size: 1rem;
+    color: magenta;
+}
+
+.header ul > #search > input:focus {
+	outline: none !important;
+    border: 1px solid magenta;
+    box-shadow: 0 0 5px magenta;
+}
+
+.header ul > #search > input::placeholder {
+	color: magenta;
+}
+
+.header ul > #search > input:focus::-webkit-input-placeholder { color:transparent; }
+.header ul > #search > input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+.header ul > #search > input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+.header ul > #search > input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+
+/* history node stuff */
 
 .header ul > #history {
 	color: white;
@@ -144,6 +110,10 @@ body {
 	font-size: 2.5rem;
 	padding: 0 2.5rem 0;
 	cursor: pointer;
+}
+
+.header ul > #history:hover { 
+    background-color: rgba(105,105,105,.3);
 }
 
 .header ul > #history > i {
@@ -161,108 +131,30 @@ body {
     height: 90%;
 }
 
-/* __________ SIDE NAV __________ */
-
-.side-nav { 
-    position: relative; 
-    height: 85%; 
-    width: 9.5rem;
-    flex-grow: 0;
-    transition: all .4 ease-out;
-    overflow: hidden;
-}
-
-.side-nav ul { 
-    flex-direction: column; 
-}
-
-.side-nav ul > li:nth-child(1) {
-	font-size: 2.4rem;
-    font-weight: 100;
-    flex-direction: row;
-    width: 100%;
-    align-items: flex-end;
-    color: white;
-}
-
-.side-nav ul > li:nth-child(1) > span > i {
-    font-size: 2.4rem;
-    margin-left: .1rem;
-}
-
-.side-nav ul > li:not(:nth-child(1))::after {
-    content: '';
-    position: absolute;
-    display: block;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background-color: darkmagenta;
-    transition: width .3s ease-out;
-}
-
-.side-nav ul > li:hover::after { 
-    width: 100%;
-}
-
-.side-nav ul > li > label {
-    position: relative;
-    font-size: 1.8rem;
-    font-weight: 100;
-}
-
-.side-nav ul > li:hover > label {
-    color: white;
-}
-
-.side-nav ul > li > label::after {
-    font-family: "FontAwesome";
-    font-size: 1.2rem;
-    content: '\f061';
-    position: absolute;
-    top: .5rem;
-    right: -1.5rem;
-}
-
-.side-nav ul > li > input {
-	flex-grow: 1;
-    margin-left: 2.2rem;
-    border-radius: 10px;
-    opacity: 0;
-    width: 0%;
-    transition: all .3s ease-out;
-    background: transparent;
-    padding: .5rem;
-    color: white;
-}
-
-.side-nav ul > li:hover > input {
-    opacity: 1;
-}
-
-.side-nav ul > li > input:focus {
-    outline: none;
-    border: 1px solid magenta;
-    box-shadow: 0 0 10px magenta;
-}
-
-.side-nav ul > li > input:focus::-webkit-input-placeholder { color:transparent; }
-.side-nav ul > li > input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
-.side-nav ul > li > input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
-.side-nav ul > li > input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
-
 /* __________ STREAM CONTAINER __________ */
 
 .stream-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 33.33%;
+    grid-template-areas: "top top top";
     flex-grow: 1;
     margin: none;
     overflow-y: scroll;
 }
 
+.stream-container .stream {
+    display: flex;
+    align-content: space-around;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin: none;
+    color: white;
+}
+
 .no-results {
+	grid-area: top;
 	display: flex;
 	flex-grow: 1;
 	justify-content: center;
@@ -282,41 +174,11 @@ body {
 	color: darkmagenta;
 }
 
-.stream-row {
-    display: flex;
-    height: 33.23%;
-    min-height: 33.23%;
-    flex-direction: row;
-    flex-wrap: nowrap; 
-    margin: none;
-}
-
-.stream-row .stream {
-    display: flex;
-    flex-basis: 33.23%; /* wont let me go to 33.3% for some reason */
-    flex-grow: 0;
-    align-content: space-around;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    margin: none;
-    
-    color: white;
-}
-
-.stream-spacer {
-	display: flex;
-    flex-basis: 33.22%; /* wont let me go to 33.3% for some reason */
-    flex-grow: 0;
-    padding: 10px 11px 11px 10px;
-    margin: none;
-}
-
 /* __________ STREAM THUMBNAILS __________ */
 
 .thumbnail {
 	display: block;
-	width: 80%;
+	width: 90%;
 	height: 95%;
 	background-color: whitesmoke;
     box-shadow: 3px 5px 15px darkslategray;
@@ -735,4 +597,36 @@ body {
 	color: darkslategray;
 	line-height: 3.3rem;
 	font-style: italic;
+}
+
+/* ---- DIFFERENT SCREEN SIZES STUFF ---- */
+
+@media (max-width: 760px) {
+	.stream-container {
+		grid-template-columns: repeat(2, 1fr);
+		grid-template-areas: "top top";
+	}
+	
+	#title img {
+		height: 3rem !important;
+	}
+}
+
+@media (max-width: 560px) {
+	#title img {
+		height: 2rem !important;
+	}
+	
+	#history {
+		font-size: 2rem !important;
+		padding: 0 1.5rem 0 !important;
+	}
+}
+
+@media (max-width: 460px) {
+	.stream-container {
+		grid-template-columns: 1fr;
+		grid-template-areas: "top";
+	}
+	
 }
