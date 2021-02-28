@@ -54,17 +54,13 @@ body {
 
 /* title node stuff */
 
-.header ul > li > #title {
-	padding: 1rem 0 1rem 1.5rem;
-}
-
-.header ul > li > #title:hover {
-    cursor: pointer;
-}
-
-.header ul > li > #title > img {
-	height: 4.5rem;
-	width: auto;
+.header ul > #title {
+	padding: 1rem 0 1rem 2rem;
+	width: 200px;
+	background: url("../assets/twitchy_logo.png");
+	background-size: 200px;
+	background-repeat: no-repeat;
+	background-position: center right;
 }
 
 /* search node stuff */
@@ -72,11 +68,12 @@ body {
 .header ul > #search {
 	flex-grow: 1;
 	justify-content: center;
+	padding: 0 1rem;
 }
 
 .header ul > #search > input {
 	display: block;
-	width: 80%;
+	width: 90%;
 	border: none;
 	border-radius: .5rem;
 	box-shadow: 0 0 2px magenta;
@@ -108,12 +105,12 @@ body {
 	color: white;
 	flex-grow: 0;
 	font-size: 2.5rem;
-	padding: 0 2.5rem 0;
+	padding: 0 2rem 0 1rem;
 	cursor: pointer;
 }
 
-.header ul > #history:hover { 
-    background-color: rgba(105,105,105,.3);
+.header ul > #history > i:hover { 
+    color: rgba(180,180,180,.8);
 }
 
 .header ul > #history > i {
@@ -136,11 +133,12 @@ body {
 .stream-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 33.33%;
+    grid-auto-rows: 250px;
     grid-template-areas: "top top top";
     flex-grow: 1;
     margin: none;
     overflow-y: scroll;
+  	-webkit-overflow-scrolling: touch;
 }
 
 .stream-container .stream {
@@ -423,7 +421,6 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: 90;
-    transition: all .4s ease-out;
     visibility: hidden;
 }
 
@@ -432,8 +429,7 @@ body {
     width: 900px;
     height: 550px;
     z-index: 95;
-    transition: all .4s ease-out;
-    background-color: #404041;
+    background-color: #242425;
     opacity: 0;
     visibility: hidden;
 }
@@ -456,11 +452,11 @@ body {
 	border: none;
 }
 
-.modal-content .close {
+.modal .close {
     position: absolute;
     z-index: 100;
-    right: -48px;
-    top: 7px;
+    right: 20px;
+    top: 20px;
     font-size: 2.1rem;
     cursor: pointer;
     color: #acabad;
@@ -478,15 +474,11 @@ body {
 	transition: opacity .3s ease-out;
 }
 
-.modal-content .close:hover + .minimize-chat {
-	opacity: 0;
-}
-
 .modal-content:hover .minimize-chat {
 	opacity: 1;
 }
 
-.modal-content .close:hover, .modal-content .minimize-chat:hover {
+.modal .close:hover, .modal .minimize-chat:hover {
 	color: whitesmoke;
 }
 
@@ -601,25 +593,37 @@ body {
 
 /* ---- DIFFERENT SCREEN SIZES STUFF ---- */
 
+@media (min-width: 1000px) {
+	#search {
+		padding-right: 0 !important;
+	}
+}
+
 @media (max-width: 760px) {
 	.stream-container {
 		grid-template-columns: repeat(2, 1fr);
 		grid-template-areas: "top top";
 	}
 	
-	#title img {
-		height: 3rem !important;
+	#title {
+		width: 140px !important;
+		background-size: 140px !important;
+		background-repeat: no-repeat !important;
+		background-position: center right !important;
 	}
 }
 
 @media (max-width: 560px) {
-	#title img {
-		height: 2rem !important;
+	#title {
+		width: 40px !important;
+		background: url("../assets/twitchy_logo_nowords.png") !important;
+		background-size: 40px !important;
+		background-repeat: no-repeat !important;
+		background-position: center right !important;
 	}
 	
 	#history {
-		font-size: 2rem !important;
-		padding: 0 1.5rem 0 !important;
+		font-size: 2.4rem !important;
 	}
 }
 
@@ -627,6 +631,15 @@ body {
 	.stream-container {
 		grid-template-columns: 1fr;
 		grid-template-areas: "top";
+	}
+	
+	#title {
+		padding-left: 1rem !important;
+	}
+	
+	#history {
+		padding-left: .5rem !important;
+		padding-right: 1rem !important;
 	}
 	
 }

@@ -256,7 +256,7 @@ $(document).ready(function() {
 		var $right = $('.history-tab');
 		if(!out) {
 			$(this).children('i').css('transform', 'rotate(-360deg)');
-			$right.css({ 'width': '25rem', 'display': 'block' });
+			$right.css({ 'width': '400px', 'display': 'block' });
 			out = true;
 		} else {
 			$(this).children('i').css('transform', 'rotate(0deg)');
@@ -290,7 +290,7 @@ $(document).ready(function() {
 			// appear modal blur
 		    $('.stream-container').css('overflow', 'hidden');
 		    $('.modal').css('visibility', 'visible');
-		    $('.modal').css('background', 'rgba(30,30,30,.7)'); 
+		    $('.modal').css('background', 'rgba(30,30,30,.8)'); 
 		    // appear modal content
 		    setTimeout(function() {
 		        $('.modal .modal-content').css('visibility', 'visible');
@@ -338,4 +338,32 @@ $(document).ready(function() {
 	// LAZY LOAD STUFF
 	//allows images to lazy load rather than hold up DOM
 	$('img').unveil();
+	
+	// TOUCH EVENT STUFF
+	var fadeInTimer, fadeOutTimer;
+	$(document).on('touchstart', '.stream', function(e) {
+		e.preventDefault();
+		clearTimeout(fadeOutTimer);
+		fadeInTimer = setTimeout(function() {
+			$(this).find('.watch-later').css('opacity', 1);
+		}, 600);
+	});
+	
+	$(document).on('touchend', '.stream', function(e) {
+		e.preventDefault();
+		clearTimeout(fadeInTimer);
+		fadeOutTimer = setTimeout(function() {
+			$(this).find('.watch-later').css('opacity', 0);
+		}, 3000);
+	});
+	
+	$(document).on('touchcancel', '.stream', function(e) {
+		e.preventDefault();
+		clearTimeout(fadeInTimer);
+		fadeOutTimer = setTimeout(function() {
+			$(this).find('.watch-later').css('opacity', 0);
+		}, 3000);
+	});
+	
 }); 
+

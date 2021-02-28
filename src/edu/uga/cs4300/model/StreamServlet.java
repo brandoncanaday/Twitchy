@@ -2,7 +2,6 @@ package edu.uga.cs4300.model;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,12 +48,10 @@ public class StreamServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = getMyWriter(response); // use this to return JSON to ajax
 		response.setContentType("application/json"); // allows us to return JSON obj to ajax
-		String f_keyword, f_game, f_channel, client_id, page; // passed here in ajax request
+		String f_keyword, client_id, page; // passed here in ajax request
 		
 		// checks to see if everything we need has been set correctly
 		if((f_keyword = InputCleaner.sanitize(request.getParameter("f_keyword"))) != null && 
-		   (f_game 	  = InputCleaner.sanitize(request.getParameter("f_game")))	  != null &&
-		   (f_channel = InputCleaner.sanitize(request.getParameter("f_channel"))) != null &&
 		   (client_id = InputCleaner.sanitize(request.getParameter("client_id"))) != null &&
 		   (page 	  = InputCleaner.sanitize(request.getParameter("page"))) 	  != null) {
 			
@@ -65,14 +62,7 @@ public class StreamServlet extends HttpServlet {
 			if(!f_keyword.isEmpty()) { 
 				ENDPOINT = "/search/streams"; 
 				QSTRING = "?query="+URLEncoder.encode(f_keyword, "UTF-8")+"&"; 
-			} else if(!f_game.isEmpty()) { 
-				QSTRING = "?game="+URLEncoder.encode(f_game, "UTF-8")+"&"; 
-			} else if(!f_channel.isEmpty()) {
-				// Twitch makes you first get the user id from channel name before you can filter streams by channel
-				// the API call within userIDsFromChannelNames() must be synchronous because we need QSTRING to be set before we can move on
-				String user_ids = userIDsFromChannelNames(URLEncoder.encode(f_channel, "UTF-8"), client_id);
-				QSTRING = "?channel="+user_ids+"%26";
-			} // if/else
+			} // if
 			
 			// prepares all request headers for the API call
 			Map<String,String> header_map = new HashMap<String,String>();
@@ -87,7 +77,7 @@ public class StreamServlet extends HttpServlet {
 						   					 QSTRING+
 						   					 "limit="+LIMIT+
 						   					 "&offset="+Integer.toString(Integer.valueOf(page)*LIMIT));
-		    	JSONArray ajax_response = new JSONArray(); // setup our own, smaller JSON to return to ajax
+		    	JSONArray resp = new JSONArray(); // setup our own, smaller JSON to return to ajax
 		    	try { // try to convert Twitch response to usable JSON
 		    		JSONArray twitch_streams = body.getJSONArray("streams"); // gets JSON array of streams from Twitch response 
 	    			for(int i = 0, size = twitch_streams.length(); i < size; i++) {
@@ -103,7 +93,7 @@ public class StreamServlet extends HttpServlet {
 	    					s.put("preview", stream.getJSONObject("preview").getString("medium"));
 	    					s.put("ch_name", stream.getJSONObject("channel").getString("name"));
 	    					s.put("ch_url", stream.getJSONObject("channel").getString("url")); 
-		    				ajax_response.put(s);
+	    					resp.put(s);
 	    				} // if
 	    			} // for
 		    	} catch(JSONException e) { 
@@ -118,7 +108,7 @@ public class StreamServlet extends HttpServlet {
 		    	
 		    	// try to send back the relevant JSON we created from the Twitch stream data
 		    	// this will then be transformed into HTML we can insert into our stream container
-		    	out.print(ajax_response);
+		    	out.print(resp);
 		    	out.flush();
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
@@ -139,42 +129,42 @@ public class StreamServlet extends HttpServlet {
 	} // doPost
 	
 	// --- MISC METHODS --- //
-	/**
-	 * Solves a limitation of the Twitch API that disallows searching of live streams by the
-	 * actual channel name. This method takes in the channel the user wants to watch, and then it
-	 * sends a GET request to the Twitch API endpoint associated with converting channel names to 
-	 * user IDs. Only with the user ID can the subsequent API call be made to grab the live stream 
-	 * associated with the channel name originally specified by the user.
-	 * 
-	 * @param f_channel the channel name(s) whose live stream(s) the user wants to watch
-	 * @param client_id the Twitch API key associated with the developer's application
-	 * @return as specified by the Twitch API, the string of comma-separated user IDs
-	 */
-	private String userIDsFromChannelNames(String f_channel, String client_id) {
-		// prepares all request headers for the API call
-		Map<String,String> header_map = new HashMap<String,String>();
-		header_map.put("Accept", "application/vnd.twitchtv.v5+json");
-		header_map.put("Client-ID", client_id);
-		String channel_ids = "";
-		try {
-			JSONObject body = MyHTTP.GET(API_BASE+"/users", 
-  					 		  header_map, 
-  					 		  "?login="+URLEncoder.encode(f_channel, "UTF-8"));
-			JSONArray channels = body.getJSONArray("users");
-			for(int i = 0, size = channels.length(); i < size; i++) {
-				channel_ids += channels.getJSONObject(i).getString("_id");
-				if(i != size-1) channel_ids += ",";
-			} // for
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			System.out.println("Something went wrong with MyHTTP.GET()");
-			e.printStackTrace();
-		} // try/catch
-		return channel_ids;
-	} // userIDsFromChannelNames
+//	/**
+//	 * Solves a limitation of the Twitch API that disallows searching of live streams by the
+//	 * actual channel name. This method takes in the channel the user wants to watch, and then it
+//	 * sends a GET request to the Twitch API endpoint associated with converting channel names to 
+//	 * user IDs. Only with the user ID can the subsequent API call be made to grab the live stream 
+//	 * associated with the channel name originally specified by the user.
+//	 * 
+//	 * @param f_channel the channel name(s) whose live stream(s) the user wants to watch
+//	 * @param client_id the Twitch API key associated with the developer's application
+//	 * @return as specified by the Twitch API, the string of comma-separated user IDs
+//	 */
+//	private String userIDsFromChannelNames(String f_channel, String client_id) {
+//		// prepares all request headers for the API call
+//		Map<String,String> header_map = new HashMap<String,String>();
+//		header_map.put("Accept", "application/vnd.twitchtv.v5+json");
+//		header_map.put("Client-ID", client_id);
+//		String channel_ids = "";
+//		try {
+//			JSONObject body = MyHTTP.GET(API_BASE+"/users", 
+//  					 		  header_map, 
+//  					 		  "?login="+URLEncoder.encode(f_channel, "UTF-8"));
+//			JSONArray channels = body.getJSONArray("users");
+//			for(int i = 0, size = channels.length(); i < size; i++) {
+//				channel_ids += channels.getJSONObject(i).getString("_id");
+//				if(i != size-1) channel_ids += ",";
+//			} // for
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			System.out.println("Something went wrong with MyHTTP.GET()");
+//			e.printStackTrace();
+//		} // try/catch
+//		return channel_ids;
+//	} // userIDsFromChannelNames
 	
 	/**
 	 * Helper method that encapsulates the try/catch block necessary to grab the PrintWriter
